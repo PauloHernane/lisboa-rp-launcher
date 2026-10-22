@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Lisboa RP Launcher</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family:'Segoe UI', Roboto, sans-serif; }
+  body { background:#0b0f14; color:#e8ecf1; min-height:100vh; }
+  .wrap { max-width:480px; margin:0 auto; padding:24px 18px 40px; }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+  .logo { width:52px; height:52px; border-radius:14px; background:#f0b90b; display:flex; align-items:center; justify-content:center; font-weight:800; color:#0b0f14; font-size:16px; flex-shrink:0; }
+  h1 { font-size:20px; font-weight:800; letter-spacing:.5px; }
+  h1 span { color:#f0b90b; }
+  .sub { font-size:12px; color:#8b95a3; }
+  .card { background:#141b24; border:1px solid #1e2836; border-radius:16px; padding:16px; margin-bottom:14px; }
+  .hero { text-align:center; padding:28px 16px; background:linear-gradient(160deg,#141b24 0%,#1a2230 60%,#23303f 100%); }
+  .hero h2 { font-size:22px; margin-bottom:6px; }
+  .hero p { font-size:13px; color:#8b95a3; margin-bottom:20px; }
+  .btn { display:block; width:100%; padding:14px; border:none; border-radius:12px; background:linear-gradient(90deg,#f0b90b,#ffd54a); color:#0b0f14; font-size:15px; font-weight:800; letter-spacing:.5px; cursor:pointer; margin-top:12px; }
+  .btn.ghost { background:transparent; border:1px solid #2a3648; color:#cfd8e3; font-weight:600; }
+  .btn:active { transform:scale(.98); }
+  .btn-play { padding:16px; font-size:17px; }
+  .status { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:13px; }
+  .dot { width:9px; height:9px; border-radius:50%; background:#2ecc71; box-shadow:0 0 8px #2ecc71; }
+  .dot.off { background:#e74c3c; box-shadow:0 0 8px #e74c3c; }
+  .players { color:#f0b90b; font-weight:700; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .item { background:#141b24; border:1px solid #1e2836; border-radius:14px; padding:14px 4px; text-align:center; text-decoration:none; color:#cfd8e3; font-size:11px; cursor:pointer; }
+  .item .ic { font-size:22px; display:block; margin-bottom:6px; }
+  .section-title { font-size:14px; font-weight:700; margin:18px 2px 10px; }
+  .news { display:flex; flex-direction:column; gap:10px; }
+  .news .n { background:#141b24; border:1px solid #1e2836; border-radius:12px; padding:12px 14px; font-size:12px; }
+  .news .n b { display:block; font-size:13px; margin-bottom:3px; color:#fff; }
+  .news .n span { color:#8b95a3; }
+  .ip-box { display:flex; align-items:center; justify-content:space-between; background:#141b24; border:1px dashed #2a3648; border-radius:12px; padding:12px 14px; margin-top:14px; }
+  .ip-box code { color:#f0b90b; font-size:14px; font-weight:700; }
+  .ip-box button { background:#f0b90b; border:none; border-radius:8px; padding:8px 14px; font-weight:700; color:#0b0f14; font-size:12px; }
+  footer { text-align:center; font-size:11px; color:#5a6576; margin-top:24px; }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#f0b90b; color:#0b0f14; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:700; opacity:0; transition:opacity .3s; pointer-events:none; z-index:99; }
+  .toast.show { opacity:1; }
+  .view { display:none; }
+  .view.active { display:block; }
+  .topbar { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .back { background:#141b24; border:1px solid #1e2836; color:#cfd8e3; width:38px; height:38px; border-radius:10px; font-size:18px; cursor:pointer; flex-shrink:0; }
+  .topbar h2 { font-size:18px; }
+  label { display:block; font-size:12px; color:#8b95a3; margin:14px 0 6px; }
+  input, select, textarea { width:100%; background:#0e141c; border:1px solid #2a3648; border-radius:10px; padding:12px 14px; color:#e8ecf1; font-size:14px; outline:none; }
+  input:focus, select:focus, textarea:focus { border-color:#f0b90b; }
+  .skins { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:8px; }
+  .skin { background:#0e141c; border:2px solid #2a3648; border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; font-size:11px; color:#8b95a3; }
+  .skin .em { font-size:24px; display:block; margin-bottom:4px; }
+  .skin.sel { border-color:#f0b90b; color:#f0b90b; background:#1a2230; }
+  .plan { background:#141b24; border:1px solid #1e2836; border-radius:14px; padding:16px; margin-bottom:12px; }
+  .plan h3 { font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+  .plan .price { color:#f0b90b; font-weight:800; font-size:14px; }
+  .plan ul { list-style:none; margin:10px 0 4px; }
+  .plan li { font-size:12px; color:#a9b4c2; padding:3px 0; }
+  .plan li::before { content:"✔ "; color:#2ecc71; }
+  .row { display:flex; gap:10px; }
+  .row > * { flex:1; }
+  .tag { display:inline-block; font-size:10px; background:#f0b90b22; color:#f0b90b; border-radius:6px; padding:3px 8px; font-weight:700; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<!-- ===== TELA: LOGIN ===== -->
+<div class="wrap view active" id="view-login">
+  <header>
+    <div class="logo">LRP</div>
+    <div>
+      <h1>LISBOA <span>ROLEPLAY</span></h1>
+      <div class="sub">SA-MP 0.3.7-R2 &bull; Android / PC</div>
+    </div>
+  </header>
+
+  <div class="card hero">
+    <h2>Bem-vindo de volta</h2>
+    <p>Entre com sua conta para acessar o servidor e gerenciar seu personagem.</p>
+  </div>
+
+  <div class="card">
+    <label>Nick no jogo</label>
+    <input id="login-nick" placeholder="Ex: Paulo_Hernane" autocomplete="off">
+    <label>Senha</label>
+    <input id="login-senha" type="password" placeholder="Sua senha">
+    <button class="btn" onclick="entrar()">ENTRAR NO SERVIDOR</button>
+    <button class="btn ghost" onclick="ir('view-home')">Explorar sem conta</button>
+  </div>
+
+  <footer>Lisboa Roleplay &bull; www.voalpegames.com</footer>
+</div>
+
+<!-- ===== TELA: HOME ===== -->
+<div class="wrap view" id="view-home">
+  <header>
+    <div class="logo">LRP</div>
+    <div>
+      <h1>LISBOA <span>ROLEPLAY</span></h1>
+      <div class="sub">SA-MP 0.3.7-R2 &bull; Android / PC</div>
+    </div>
+  </header>
+
+  <div class="card hero">
+    <h2 id="ola">Crie sua história na cidade</h2>
+    <p>Trabalhos, veículos, propriedades, organizações e eventos. Um RPG completo no universo SA:MP.</p>
+    <button class="btn btn-play" onclick="connectar()">▶ JOGAR AGORA</button>
+    <div class="status">
+      <div class="dot" id="dot"></div>
+      <span id="status-txt">Verificando servidor...</span>
+    </div>
+    <div class="ip-box">
+      <code id="ip">144.217.64.5:8591</code>
+      <button onclick="copiarIP()">COPIAR IP</button>
+    </div>
+  </div>
+
+  <div class="section-title">Menu</div>
+  <div class="grid">
+    <a class="item" href="https://www.voalpegames.com"><span class="ic">🌐</span>Site</a>
+    <a class="item" href="#" onclick="baixarCliente();return false"><span class="ic">⬇️</span>Cliente</a>
+    <a class="item" href="https://discord.gg"><span class="ic">💬</span>Discord</a>
+    <div class="item" onclick="ir('view-loja')"><span class="ic">🛒</span>Loja VIP</div>
+    <div class="item" onclick="ir('view-personagem')"><span class="ic">👕</span>Personagem</div>
+    <div class="item" onclick="ir('view-regras')"><span class="ic">📋</span>Regras</div>
+    <div class="item" onclick="aviso('Ranking')"><span class="ic">🏆</span>Ranking</div>
+    <div class="item" onclick="ir('view-ajustes')"><span class="ic">⚙️</span>Ajustes</div>
+  </div>
+
+  <div class="section-title">Novidades</div>
+  <div class="news">
+    <div class="n"><b>🚀 Servidor renovado</b><span>Sistemas novos, eventos frequentes e comunidade ativa. Entre e construa sua história.</span></div>
+    <div class="n"><b>🚗 Empregos e veículos</b><span>Caminhoneiro, mecânico, taxista e muito mais. Compre e customize seu carro.</span></div>
+    <div class="n"><b>👮 Organizações</b><span>Policiais, médicos, famílias e grupos. Escolha seu lado na cidade.</span></div>
+  </div>
+
+  <footer>Lisboa Roleplay &bull; www.voalpegames.com<br>Versão 1.0</footer>
+</div>
+
+<!-- ===== TELA: PERSONAGEM ===== -->
+<div class="wrap view" id="view-personagem">
+  <div class="topbar">
+    <button class="back" onclick="ir('view-home')">←</button>
+    <h2>Meu Personagem</h2>
+  </div>
+
+  <div class="card">
+    <label>Nome do personagem (RP)</label>
+    <input id="pg-nome" placeholder="Ex: Paulo Correia">
+    <label>Idade</label>
+    <input id="pg-idade" type="number" placeholder="Ex: 24">
+    <label>Cidade natal / história</label>
+    <textarea id="pg-hist" rows="3" placeholder="Conte a origem do seu personagem..."></textarea>
+    <label>Aparência (skin)</label>
+    <div class="skins" id="skins">
+      <div class="skin sel" onclick="pickSkin(this)">👨<br>Civil</div>
+      <div class="skin" onclick="pickSkin(this)">👮<br>Polícia</div>
+      <div class="skin" onclick="pickSkin(this)">🚑<br>Médico</div>
+      <div class="skin" onclick="pickSkin(this)">🔧<br>Mecânico</div>
+      <div class="skin" onclick="pickSkin(this)">🚚<br>Caminhoneiro</div>
+      <div class="skin" onclick="pickSkin(this)">🚕<br>Taxista</div>
+      <div class="skin" onclick="pickSkin(this)">💼<br>Empresário</div>
+      <div class="skin" onclick="pickSkin(this)">🤠<br>Fazendeiro</div>
+    </div>
+    <label>Emprego desejado</label>
+    <select id="pg-emprego">
+      <option>Desempregado</option>
+      <option>Caminhoneiro</option>
+      <option>Mecânico</option>
+      <option>Taxista</option>
+      <option>Pizza Boy</option>
+      <option>Entregador</option>
+      <option>Minerador</option>
+      <option>Pescador</option>
+    </select>
+    <button class="btn" onclick="salvarPersonagem()">SALVAR PERSONAGEM</button>
+  </div>
+  <footer>Os dados ficam salvos neste aparelho.</footer>
+</div>
+
+<!-- ===== TELA: LOJA VIP ===== -->
+<div class="wrap view" id="view-loja">
+  <div class="topbar">
+    <button class="back" onclick="ir('view-home')">←</button>
+    <h2>Loja VIP</h2>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <p style="font-size:13px;color:#8b95a3">Vantagens exclusivas que ajudam a manter o servidor online. Pagamento pelo site oficial.</p>
+  </div>
+
+  <div class="plan">
+    <h3>🥉 VIP Bronze <span class="price">R$ 9,90/mês</span></h3>
+    <ul>
+      <li>Tag bronze no chat e no nome</li>
+      <li>Salário bônus nos pagamentos</li>
+      <li>+1 slot de garagem</li>
+      <li>Kit de spawn inicial</li>
+    </ul>
+    <button class="btn" onclick="comprar('Bronze')">COMPRAR</button>
+  </div>
+
+  <div class="plan">
+    <h3>🥈 VIP Prata <span class="price">R$ 19,90/mês</span></h3>
+    <ul>
+      <li>Tudo do Bronze</li>
+      <li>+3 slots de garagem</li>
+      <li>Comando /skin livre</li>
+      <li>Prioridade na fila de entrada</li>
+    </ul>
+    <span class="tag">MAIS VENDIDO</span>
+    <button class="btn" onclick="comprar('Prata')">COMPRAR</button>
+  </div>
+
+  <div class="plan">
+    <h3>🥇 VIP Ouro <span class="price">R$ 34,90/mês</span></h3>
+    <ul>
+      <li>Tudo do Prata</li>
+      <li>Veículo VIP exclusivo</li>
+      <li>Casa VIP na cidade</li>
+      <li>Suporte prioritário no Discord</li>
+    </ul>
+    <button class="btn" onclick="comprar('Ouro')">COMPRAR</button>
+  </div>
+  <footer>www.voalpegames.com &bull; loja oficial</footer>
+</div>
+
+<!-- ===== TELA: REGRAS ===== -->
+<div class="wrap view" id="view-regras">
+  <div class="topbar">
+    <button class="back" onclick="ir('view-home')">←</button>
+    <h2>Regras do Servidor</h2>
+  </div>
+  <div class="card">
+    <b style="color:#f0b90b">1. Roleplay</b>
+    <p style="font-size:12px;color:#a9b4c2;margin-top:4px">Sempre finja ser seu personagem. Nomes fora do padrão RP serão trocados pela administração.</p>
+  </div>
+  <div class="card">
+    <b style="color:#f0b90b">2. Sem DM/RDM</b>
+    <p style="font-size:12px;color:#a9b4c2;margin-top:4px">Proibido matar sem motivo de roleplay. Deathmatch resultará em banimento.</p>
+  </div>
+  <div class="card">
+    <b style="color:#f0b90b">3. Sem metagaming</b>
+    <p style="font-size:12px;color:#a9b4c2;margin-top:4px">Não use informações obtidas fora do jogo dentro do roleplay.</p>
+  </div>
+  <div class="card">
+    <b style="color:#f0b90b">4. Respeito</b>
+    <p style="font-size:12px;color:#a9b4c2;margin-top:4px">Ofensas, racismo e desrespeito resultam em punição permanente.</p>
+  </div>
+  <div class="card">
+    <b style="color:#f0b90b">5. Cheats</b>
+    <p style="font-size:12px;color:#a9b4c2;margin-top:4px">Qualquer tipo de modificador = banimento permanente, sem aviso.</p>
+  </div>
+</div>
+
+<!-- ===== TELA: AJUSTES ===== -->
+<div class="wrap view" id="view-ajustes">
+  <div class="topbar">
+    <button class="back" onclick="ir('view-home')">←</button>
+    <h2>Ajustes</h2>
+  </div>
+  <div class="card">
+    <label>Conta conectada</label>
+    <input id="aj-nick" readonly>
+    <label>Servidor</label>
+    <input value="144.217.64.5:8591" readonly>
+    <button class="btn ghost" onclick="limparConta()">SAIR DA CONTA</button>
+    <button class="btn ghost" onclick="ir('view-login')">TELA DE LOGIN</button>
+  </div>
+  <footer>Lisboa RP Launcher &bull; Versão 1.0</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var IP = '144.217.64.5:8591';
+var API = 'https://www.samp-api.ct8.pl/server/' + IP;
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+function ir(id){
+  var views = document.querySelectorAll('.view');
+  for (var i = 0; i < views.length; i++) views[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function entrar(){
+  var nick = document.getElementById('login-nick').value.trim();
+  if (!nick) { toast('Digite seu nick para entrar.'); return; }
+  try { localStorage.setItem('lrp_nick', nick); } catch(e) {}
+  document.getElementById('aj-nick').value = nick;
+  document.getElementById('ola').textContent = 'Bem-vindo, ' + nick + '!';
+  ir('view-home');
+  toast('Bem-vindo, ' + nick + '!');
+}
+
+function limparConta(){
+  try { localStorage.removeItem('lrp_nick'); } catch(e) {}
+  document.getElementById('aj-nick').value = '';
+  document.getElementById('ola').textContent = 'Crie sua história na cidade';
+  ir('view-login');
+  toast('Você saiu da conta.');
+}
+
+function pickSkin(el){
+  var all = document.querySelectorAll('.skin');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('sel');
+  el.classList.add('sel');
+  try { localStorage.setItem('lrp_skin', el.textContent.trim()); } catch(e) {}
+}
+
+function salvarPersonagem(){
+  var nome = document.getElementById('pg-nome').value.trim();
+  if (!nome) { toast('Informe o nome do personagem.'); return; }
+  var dados = {
+    nome: nome,
+    idade: document.getElementById('pg-idade').value,
+    historia: document.getElementById('pg-hist').value,
+    emprego: document.getElementById('pg-emprego').value
+  };
+  try { localStorage.setItem('lrp_personagem', JSON.stringify(dados)); } catch(e) {}
+  toast('Personagem "' + nome + '" salvo!');
+}
+
+function carregarDados(){
+  try {
+    var nick = localStorage.getItem('lrp_nick');
+    if (nick) {
+      document.getElementById('aj-nick').value = nick;
+      document.getElementById('ola').textContent = 'Bem-vindo, ' + nick + '!';
+      ir('view-home');
+    }
+    var pg = localStorage.getItem('lrp_personagem');
+    if (pg) {
+      pg = JSON.parse(pg);
+      document.getElementById('pg-nome').value = pg.nome || '';
+      document.getElementById('pg-idade').value = pg.idade || '';
+      document.getElementById('pg-hist').value = pg.historia || '';
+      if (pg.emprego) document.getElementById('pg-emprego').value = pg.emprego;
+    }
+  } catch(e) {}
+}
+
+function copiarIP(){
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(IP).then(function(){ toast('IP copiado: ' + IP); });
+  } else {
+    var i = document.createElement('input');
+    i.value = IP; document.body.appendChild(i);
+    i.select(); document.execCommand('copy'); document.body.removeChild(i);
+    toast('IP copiado: ' + IP);
+  }
+}
+
+function connectar(){ copiarIP(); toast('IP copiado! Abra o cliente SA-MP e cole para conectar.'); }
+function baixarCliente(){ toast('Baixe o cliente SA-MP Mobile na Play Store ou no nosso site.'); }
+function aviso(nome){ toast(nome + ': disponível em breve no launcher.'); }
+function comprar(plano){ toast('Redirecionando para a loja oficial...'); window.location.href = 'https://www.voalpegames.com'; }
+
+function atualizarStatus(){
+  fetch(API).then(function(r){ return r.json(); }).then(function(d){
+    var online = d && (d.status === 'online' || d.online);
+    var players = (d && (d.players !== undefined ? d.players : d.players_count)) || 0;
+    var dot = document.getElementById('dot');
+    var txt = document.getElementById('status-txt');
+    if (online) {
+      dot.classList.remove('off');
+      txt.innerHTML = 'Servidor <span class="players">ONLINE</span> &bull; ' + players + ' jogando agora';
+    } else {
+      dot.classList.add('off');
+      txt.textContent = 'Servidor offline no momento';
+    }
+  }).catch(function(){
+    document.getElementById('dot').classList.add('off');
+    document.getElementById('status-txt').textContent = 'Não foi possível verificar o servidor';
+  });
+}
+
+carregarDados();
+atualizarStatus();
+setInterval(atualizarStatus, 60000);
+</script>
+</body>
+</html>
